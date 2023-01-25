@@ -17,7 +17,6 @@ trait GenericNumberType[T] extends Bundle:
   def >>(that: T): T
   def zero: T
 
-
 class UInt(val fixed_width: Width) extends GenericNumberType[UInt]:
   val operand_A = chisel3.UInt(fixed_width)
   val output = Wire(new UInt(fixed_width))
@@ -189,6 +188,8 @@ class Float(val expWidth: Int, val sigWidth: Int) extends GenericNumberType[Floa
 
 }
 
+class FixedWidth()
+
 class GenericALU[T](val width: Width) extends chisel3.Module {
   val io = IO(new Bundle {
     val opcode = Input(UInt(5.W))
@@ -202,7 +203,6 @@ class GenericALU[T](val width: Width) extends chisel3.Module {
   val op_B = io.op_B
   val output = Wire(new T(Width(width)))  
   output := op_A.zero
-  output := op_A.store(io.op_A, io.op_B)
 
   switch(opcode) {
     is(0.U) { output := op_A.add(io.op_B) }
@@ -221,5 +221,5 @@ object MainGeneric extends App {
   println("Tianshu's Generic ALU implementation")
   (new chisel3.stage.ChiselStage).emitVerilog(new GenericALU[UInt](32.W))
   (new chisel3.stage.ChiselStage).emitVerilog(new GenericALU[SInt](32.W))
-  (new chisel3.stage.ChiselStage).emitVerilog(new GenericALU[SInt](16.W))
+  (new chisel3.stage.ChiselStage).emitVerilog(new GenericALU[Float](16.W))
 }
